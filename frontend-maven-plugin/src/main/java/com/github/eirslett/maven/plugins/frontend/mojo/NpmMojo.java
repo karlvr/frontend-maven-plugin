@@ -42,7 +42,7 @@ public final class NpmMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		File packageJson = new File(workingDirectory, "package.json");
-		if (buildContext.hasDelta(packageJson)) {
+		if (buildContext.hasDelta(packageJson) || !buildContext.isIncremental()) {
 			try {
 				setSLF4jLogger(getLog());
 
