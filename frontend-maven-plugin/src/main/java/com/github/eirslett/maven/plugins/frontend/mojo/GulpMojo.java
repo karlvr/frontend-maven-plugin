@@ -74,7 +74,7 @@ public final class GulpMojo extends AbstractMojo {
 		}
 		
 		// Check for changes in the gulpfile.js
-		if (buildContext.hasDelta(new File(workingDirectory, "gulpfile.js"))) {
+		if (buildContext.hasDelta(new File(workingDirectory, "gulpfile.js")) || buildContext.hasDelta(new File(workingDirectory, "package.json"))) {
 			return true;
 		}
 
