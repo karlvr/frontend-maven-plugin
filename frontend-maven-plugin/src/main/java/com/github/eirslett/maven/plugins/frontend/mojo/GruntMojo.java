@@ -69,6 +69,10 @@ public final class GruntMojo extends AbstractMojo {
 	}
 
 	private boolean shouldExecute() {
+		if (!buildContext.isIncremental()) {
+			return true;
+		}
+		
 		// Check for changes in the Gruntfile.js
 		if (buildContext.hasDelta(new File(workingDirectory, "Gruntfile.js"))) {
 			return true;

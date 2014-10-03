@@ -69,6 +69,10 @@ public final class GulpMojo extends AbstractMojo {
 	}
     
 	private boolean shouldExecute() {
+		if (!buildContext.isIncremental()) {
+			return true;
+		}
+		
 		// Check for changes in the gulpfile.js
 		if (buildContext.hasDelta(new File(workingDirectory, "gulpfile.js"))) {
 			return true;
