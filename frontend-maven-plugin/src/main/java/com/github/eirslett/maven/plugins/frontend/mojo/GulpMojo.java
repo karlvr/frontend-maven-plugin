@@ -30,65 +30,65 @@ public final class GulpMojo extends AbstractMojo {
     @Parameter(property = "arguments")
     private String arguments;
     
-	/**
-	 * The directory containing front end files that will be processed by gulp.
-	 * If this is set then files in the directory will be checked for
-	 * modifications before running gulp.
-	 */
-	@Parameter(property = "srcdir")
-	private File srcdir;
+    /**
+     * The directory containing front end files that will be processed by gulp.
+     * If this is set then files in the directory will be checked for
+     * modifications before running gulp.
+     */
+    @Parameter(property = "srcdir")
+    private File srcdir;
 
-	/**
-	 * The directory where front end files will be output by gulp. If this is
-	 * set then they will be refreshed so they correctly show as modified in
-	 * Eclipse.
-	 */
-	@Parameter(property = "outputdir")
-	private File outputdir;
+    /**
+     * The directory where front end files will be output by gulp. If this is
+     * set then they will be refreshed so they correctly show as modified in
+     * Eclipse.
+     */
+    @Parameter(property = "outputdir")
+    private File outputdir;
 
-	@Component
-	private BuildContext buildContext;
+    @Component
+    private BuildContext buildContext;
 
     @Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (shouldExecute()) {
-			try {
-				MojoUtils.setSLF4jLogger(getLog());
-				new FrontendPluginFactory(workingDirectory).getGulpRunner().execute(arguments);
-			} catch (TaskRunnerException e) {
-				throw new MojoFailureException("Failed to run task", e);
-			}
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (shouldExecute()) {
+            try {
+                MojoUtils.setSLF4jLogger(getLog());
+                new FrontendPluginFactory(workingDirectory).getGulpRunner().execute(arguments);
+            } catch (TaskRunnerException e) {
+                throw new MojoFailureException("Failed to run task", e);
+            }
 
-			if (outputdir != null) {
-				getLog().info("Refreshing files after gulp: " + outputdir);
-				buildContext.refresh(outputdir);
-			}
-		} else {
-			getLog().info("Skipping gulp as no modified files in " + srcdir);
-		}
-	}
+            if (outputdir != null) {
+                getLog().info("Refreshing files after gulp: " + outputdir);
+                buildContext.refresh(outputdir);
+            }
+        } else {
+            getLog().info("Skipping gulp as no modified files in " + srcdir);
+        }
+    }
     
-	private boolean shouldExecute() {
-		// If there is no buildContext, or this is not an incremental build, always execute.
-		if (buildContext == null || !buildContext.isIncremental()) {
-			return true;
-		}
-		
-		// Check for changes in the gulpfile.js
-		if (buildContext.hasDelta(new File(workingDirectory, "gulpfile.js")) || buildContext.hasDelta(new File(workingDirectory, "package.json"))) {
-			return true;
-		}
+    private boolean shouldExecute() {
+        // If there is no buildContext, or this is not an incremental build, always execute.
+        if (buildContext == null || !buildContext.isIncremental()) {
+            return true;
+        }
+        
+        // Check for changes in the gulpfile.js
+        if (buildContext.hasDelta(new File(workingDirectory, "gulpfile.js")) || buildContext.hasDelta(new File(workingDirectory, "package.json"))) {
+            return true;
+        }
 
-		if (srcdir == null) {
-			getLog().info("gulp goal doesn't have srcdir set: not checking for modified files");
-			return true;
-		}
+        if (srcdir == null) {
+            getLog().info("gulp goal doesn't have srcdir set: not checking for modified files");
+            return true;
+        }
 
-		// Check for changes in the srcdir
-		Scanner scanner = buildContext.newScanner(srcdir);
-		scanner.scan();
-		String[] includedFiles = scanner.getIncludedFiles();
-		return (includedFiles != null && includedFiles.length > 0);
-	}
+        // Check for changes in the srcdir
+        Scanner scanner = buildContext.newScanner(srcdir);
+        scanner.scan();
+        String[] includedFiles = scanner.getIncludedFiles();
+        return (includedFiles != null && includedFiles.length > 0);
+    }
     
 }
