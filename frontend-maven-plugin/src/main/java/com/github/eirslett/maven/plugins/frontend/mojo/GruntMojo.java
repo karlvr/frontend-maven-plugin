@@ -69,7 +69,8 @@ public final class GruntMojo extends AbstractMojo {
 	}
 
 	private boolean shouldExecute() {
-		if (!buildContext.isIncremental()) {
+		// If there is no buildContext, or this is not an incremental build, always execute.
+		if (buildContext == null || !buildContext.isIncremental()) {
 			return true;
 		}
 		
