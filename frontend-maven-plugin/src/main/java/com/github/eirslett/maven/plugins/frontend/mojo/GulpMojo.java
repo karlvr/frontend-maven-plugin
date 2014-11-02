@@ -31,6 +31,13 @@ public final class GulpMojo extends AbstractMojo {
     private String arguments;
     
     /**
+     * Files that should be checked for changes, in addition to the srcdir files.
+     * Defaults to gulpfile.js in the {@link #workingDirectory}.
+     */
+    @Parameter(property = "triggerfiles")
+    private File[] triggerfiles;
+    
+    /**
      * The directory containing front end files that will be processed by gulp.
      * If this is set then files in the directory will be checked for
      * modifications before running gulp.
@@ -74,9 +81,17 @@ public final class GulpMojo extends AbstractMojo {
             return true;
         }
         
-        // Check for changes in the gulpfile.js
-        if (buildContext.hasDelta(new File(workingDirectory, "gulpfile.js")) || buildContext.hasDelta(new File(workingDirectory, "package.json"))) {
-            return true;
+        if (triggerfiles != null) {
+            for (int i = 0; i < triggerfiles.length; i++) {
+                if (buildContext.hasDelta(triggerfiles[i])) {
+                    return true;
+                }
+            }
+        } else {
+            // Check for changes in the gulpfile.js
+            if (buildContext.hasDelta(new File(workingDirectory, "gulpfile.js"))) {
+                return true;
+            }
         }
 
         if (srcdir == null) {

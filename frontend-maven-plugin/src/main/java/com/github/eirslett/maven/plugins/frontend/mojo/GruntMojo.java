@@ -31,6 +31,13 @@ public final class GruntMojo extends AbstractMojo {
     private String arguments;
     
     /**
+     * Files that should be checked for changes, in addition to the srcdir files.
+     * Defaults to Gruntfile.js in the {@link #workingDirectory}.
+     */
+    @Parameter(property = "triggerfiles")
+    private File[] triggerfiles;
+    
+    /**
      * The directory containing front end files that will be processed by grunt.
      * If this is set then files in the directory will be checked for
      * modifications before running grunt.
@@ -74,9 +81,17 @@ public final class GruntMojo extends AbstractMojo {
             return true;
         }
         
-        // Check for changes in the Gruntfile.js
-        if (buildContext.hasDelta(new File(workingDirectory, "Gruntfile.js"))) {
-            return true;
+        if (triggerfiles != null) {
+            for (int i = 0; i < triggerfiles.length; i++) {
+                if (buildContext.hasDelta(triggerfiles[i])) {
+                    return true;
+                }
+            }
+        } else {
+            // Check for changes in the Gruntfile.js
+            if (buildContext.hasDelta(new File(workingDirectory, "Gruntfile.js"))) {
+                return true;
+            }
         }
 
         if (srcdir == null) {
