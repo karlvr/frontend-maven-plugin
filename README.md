@@ -2,8 +2,10 @@ OS X Build: (Travis CI) [![Build Status](https://travis-ci.org/eirslett/frontend
 
 Windows Build: (Appveyor) [![Build status](https://ci.appveyor.com/api/projects/status/vxbccc1t9ceadhi9)](https://ci.appveyor.com/project/eirslett/frontend-maven-plugin)
 
+Linux Build: (CloudBees) [![Build status](https://eirslett.ci.cloudbees.com/buildStatus/icon?job=Frontend%20maven%20plugin)](https://eirslett.ci.cloudbees.com/job/Frontend%20maven%20plugin/)
+
 # Frontend maven plugin
-This plugin downloads/installs Node and NPM locally for your project, runs NPM install, Grunt and/or gulp and/or Karma.
+This plugin downloads/installs Node and NPM locally for your project, runs NPM install, installs bower dependencies, run Grunt and/or gulp and/or Karma.
 It's supposed to work on Windows, OS X and Linux.
 
 #### What is this plugin meant to do?
@@ -29,7 +31,7 @@ Include the plugin as a dependency in your Maven project.
     <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>0.0.16</version>
+        <version>0.0.20</version>
         ...
     </plugin>
 ...
@@ -103,6 +105,25 @@ By default, no colors will be shown in the log.
         <arguments>install</arguments>
     </configuration>
 </execution>
+```
+
+### Running bower
+All bower dependencies will be installed in the `bower_components` folder in your working directory.
+```xml
+<execution>
+    <id>bower install</id>
+    <goals>
+        <goal>bower</goal>
+    </goals>
+    
+    <configuration>
+	    <!-- optional: The default argument is actually
+	    "install", so unless you need to run some other bower command,
+	    you can remove this whole <configuration> section.
+	    -->
+        <arguments>install</arguments>
+    </configuration>
+</execution>   
 ```
 
 ### Running Grunt
@@ -191,7 +212,7 @@ has been changed. The `grunt` and `gulp` goals have new `srcdir` and `triggerfil
 these are set they check for changes in your source files before being run. See the wiki for more information.
 
 # Helper scripts
-During development, it's convenient to have the "npm", "grunt", "gulp" and "karma" commands
+During development, it's convenient to have the "npm", "bower", "grunt", "gulp" and "karma" commands
 available on the command line. If you want that, use [those helper scripts](https://github.com/eirslett/frontend-maven-plugin/tree/master/frontend-maven-plugin/src/it/example%20project/helper-scripts)!
 
 ## To build this project:
