@@ -5,7 +5,6 @@
 			<pluginExecutionFilter>
 				<goals>
 					<goal>install-node-and-npm</goal>
-					<goal>npm</goal>
 				</goals>
 			</pluginExecutionFilter>
 			<action>
@@ -18,6 +17,7 @@
         <pluginExecution>
             <pluginExecutionFilter>
                 <goals>
+                    <goal>npm</goal>
                     <goal>gulp</goal>
                     <goal>grunt</goal>
                     <goal>bower</goal>
