@@ -37,7 +37,7 @@ final class ProcessExecutor {
         try {
             final Process process = processBuilder.start();
             final String result = readString(process.getInputStream());
-            final String error = readString(process.getInputStream());
+            final String error = readString(process.getErrorStream());
             final int exitValue = process.waitFor();
 
             if(exitValue == 0){
@@ -54,7 +54,6 @@ final class ProcessExecutor {
 
     public int executeAndRedirectOutput(final Logger logger) throws ProcessExecutionException {
         try {
-            processBuilder.redirectErrorStream(true);
             final Process process = processBuilder.start();
 
             final Thread infoLogThread = InputStreamHandler.logInfo(process.getInputStream(), logger);
@@ -86,21 +85,24 @@ final class ProcessExecutor {
                 }
             }
         }
-        if (pathVarValue == null) {
-            environment.put(pathVarName, workingDirectory + File.separator + "node");
+
+        StringBuilder pathBuilder = new StringBuilder();
+        if (pathVarValue != null) {
+            pathBuilder.append(pathVarValue).append(File.pathSeparator);
         }
-        else {
-            environment.put(pathVarName, workingDirectory + File.separator + "node" + File.pathSeparator + pathVarValue);
-        }
+        pathBuilder.append(workingDirectory + File.separator + "node").append(File.pathSeparator);
+        pathBuilder.append(workingDirectory + File.separator + "node" + File.separator + "npm" + File.separator + "bin");
+        environment.put(pathVarName, pathBuilder.toString());
+
         return pbuilder;
     }
 
     private static String readString(InputStream processInputStream) throws IOException {
         BufferedReader inputStream = new BufferedReader(new InputStreamReader(processInputStream));
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String line;
         while((line = inputStream.readLine()) != null) {
-            result.append(line + "\n");
+            result.append(line).append("\n");
         }
         return result.toString().trim();
     }
